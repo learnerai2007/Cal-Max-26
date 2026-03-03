@@ -12,7 +12,6 @@ interface CalculatorFormProps {
 export const CalculatorForm: React.FC<CalculatorFormProps> = ({ calculator, values, onChange }) => {
   const renderInput = (input: CalculatorInput, index: number) => {
     const commonProps = {
-      key: input.id,
       label: input.label,
       className: "animate-fade-up",
       style: { animationDelay: `${index * 0.05}s` }
@@ -22,6 +21,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({ calculator, valu
       case 'slider':
         return (
           <SliderField
+            key={input.id}
             {...commonProps}
             min={input.min || 0}
             max={input.max || 100}
@@ -33,24 +33,32 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({ calculator, valu
         );
       case 'select':
         return (
-          <div key={input.id} className={`flex flex-col space-y-2 ${commonProps.className}`} style={commonProps.style}>
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+          <div key={input.id} className={`space-y-1.5 ${commonProps.className}`} style={commonProps.style}>
+            <label className="block text-sm font-medium text-text-secondary ml-1">
               {input.label}
             </label>
-            <select
-              value={values[input.id] ?? input.defaultValue}
-              onChange={(e) => onChange(input.id, e.target.value)}
-              className="block w-full rounded-2xl border border-white/5 bg-slate-900/50 px-4 py-3.5 text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 transition-all hover:bg-slate-900"
-            >
-              {input.options?.map(opt => (
-                <option key={opt.value} value={opt.value} className="bg-slate-900">{opt.label}</option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={values[input.id] ?? input.defaultValue}
+                onChange={(e) => onChange(input.id, e.target.value)}
+                className="block w-full rounded-xl border border-border-color bg-white px-4 py-3 text-base text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-color/20 focus:border-accent-color transition-all shadow-sm appearance-none"
+              >
+                {input.options?.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                <svg className="w-4 h-4 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
         );
       case 'date':
         return (
           <TextField
+            key={input.id}
             {...commonProps}
             type="date"
             value={values[input.id] ?? input.defaultValue}
@@ -61,6 +69,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({ calculator, valu
         const isNumeric = input.type === 'number' || input.type === 'currency';
         return (
           <TextField
+            key={input.id}
             {...commonProps}
             type={isNumeric ? 'number' : 'text'}
             unit={input.unit}
@@ -76,8 +85,8 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({ calculator, valu
   };
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 gap-8">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-6">
         {calculator.inputs.map((input, idx) => renderInput(input, idx))}
       </div>
     </div>

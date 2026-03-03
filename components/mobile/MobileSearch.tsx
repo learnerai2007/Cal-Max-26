@@ -19,34 +19,34 @@ export const MobileSearch: React.FC<{ onSelectCalculator: (c: CalculatorDef) => 
   const tags = ['Mortgage', 'BMI', 'Loan', 'Percentage', 'SIP', 'Tax'];
 
   return (
-    <div className="p-6 space-y-8 animate-fade-in">
-      <div className="relative">
-        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+    <div className="p-8 space-y-10 animate-fade-in">
+      <div className="relative group">
+        <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-accent transition-colors" />
         <input 
           autoFocus
           type="text"
           placeholder="What do you want to calculate?"
-          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all shadow-sm"
+          className="w-full bg-bg-secondary/50 border border-border-color rounded-2xl py-5 pl-14 pr-4 text-sm font-bold text-text-primary placeholder:text-text-secondary/30 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40 transition-all shadow-inner"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         {query && (
-          <button onClick={() => setQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
-             <X size={16} />
+          <button onClick={() => setQuery('')} className="absolute right-5 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary">
+             <X size={20} />
           </button>
         )}
       </div>
 
       {!query ? (
-        <div className="space-y-6">
-          <div className="space-y-3">
-             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-2">Common Searches</h3>
-             <div className="flex flex-wrap gap-2">
+        <div className="space-y-10">
+          <div className="space-y-4">
+             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary px-2">Common Searches</h3>
+             <div className="flex flex-wrap gap-3">
                 {tags.map(tag => (
                   <button 
                     key={tag}
                     onClick={() => setQuery(tag)}
-                    className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold rounded-xl hover:bg-indigo-50 transition-colors"
+                    className="px-5 py-3 bg-bg-secondary/50 text-text-primary text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-accent/10 hover:text-accent transition-all border border-border-color active:scale-95"
                   >
                     {tag}
                   </button>
@@ -54,27 +54,27 @@ export const MobileSearch: React.FC<{ onSelectCalculator: (c: CalculatorDef) => 
              </div>
           </div>
           
-          <div className="p-8 text-center bg-indigo-50/50 dark:bg-indigo-950/20 rounded-3xl border border-indigo-100 dark:border-indigo-900/50">
-             <Calculator size={32} className="mx-auto text-indigo-500 mb-4 opacity-40" />
-             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Search through our database of 200+ specialized computation engines.</p>
+          <div className="p-10 text-center bg-accent/5 rounded-[2.5rem] border border-accent/10 high-depth matte-surface">
+             <Calculator size={40} className="mx-auto text-accent mb-6 opacity-40 animate-pulse-subtle" />
+             <p className="text-xs text-text-secondary leading-relaxed font-medium">Search through our database of 200+ specialized computation engines.</p>
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
-           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">{results.length} Tools Found</p>
-           <div className="space-y-3">
+        <div className="space-y-6">
+           <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] px-2">{results.length} Tools Found</p>
+           <div className="space-y-4">
              {results.map(calc => (
                <button
                 key={calc.id}
                 onClick={() => onSelectCalculator(calc)}
-                className="w-full p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center space-x-4 text-left shadow-sm active:scale-[0.98] transition-all"
+                className="w-full p-5 bg-bg-secondary/30 border border-border-color rounded-3xl flex items-center space-x-5 text-left active:scale-[0.98] transition-all high-depth matte-surface"
                >
-                 <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-indigo-500">
-                    <Calculator size={18} />
+                 <div className="w-12 h-12 bg-bg-secondary text-accent rounded-2xl flex items-center justify-center shadow-inner">
+                    <Calculator size={24} />
                  </div>
                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">{calc.name}</h4>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{calc.category}</p>
+                    <h4 className="text-sm font-bold text-text-primary">{calc.name}</h4>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary mt-1">{calc.category}</p>
                  </div>
                </button>
              ))}

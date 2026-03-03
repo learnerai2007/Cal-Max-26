@@ -74,7 +74,7 @@ export const DesktopView: React.FC<DesktopViewProps> = ({
   return (
     <div className="flex h-screen overflow-hidden bg-bg-primary">
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-20 bg-bg-primary/80 backdrop-blur-md border-b border-border-color px-10 flex items-center justify-between z-30">
+        <header className="h-20 bg-bg-primary/80 backdrop-blur-md border-b border-border-color px-10 flex items-center justify-between z-30 shiny">
           <div className="flex items-center space-x-3">
              <span className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] flex items-center">
               {activeCategory}
@@ -105,7 +105,7 @@ export const DesktopView: React.FC<DesktopViewProps> = ({
           {selectedCalculator ? (
              <div className="max-w-6xl mx-auto grid grid-cols-12 gap-8 animate-fade-up p-10">
                 <div className="col-span-12 lg:col-span-7 space-y-6">
-                   <div className="glass rounded-3xl p-10 relative overflow-hidden card-shadow">
+                   <div className="glass rounded-3xl p-10 relative overflow-hidden high-depth matte-surface">
                       <div className="flex items-center space-x-4 mb-10">
                         <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center text-white shadow-xl shadow-accent/20">
                           <DynamicIcon name={selectedCalculator.icon} size={28} />
@@ -134,7 +134,7 @@ export const DesktopView: React.FC<DesktopViewProps> = ({
                 </div>
 
                 <div className="col-span-12 lg:col-span-5">
-                   <div className="bg-bg-secondary border border-border-color rounded-3xl p-10 h-full card-shadow">
+                   <div className="bg-bg-secondary border border-border-color rounded-3xl p-10 h-full high-depth matte-surface">
                       <div className="flex items-center space-x-2 mb-8 opacity-60">
                          <Sparkles size={14} className="text-accent" />
                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-text-primary">Results Engine</span>
@@ -159,7 +159,7 @@ export const DesktopView: React.FC<DesktopViewProps> = ({
                     <button 
                       key={calc.id}
                       onClick={() => onSelectCalculator(calc)}
-                      className="group glass rounded-3xl p-8 text-left hover:border-accent/50 transition-all card-shadow"
+                      className="group glass rounded-3xl p-8 text-left hover:border-accent/50 transition-all high-depth matte-surface"
                     >
                       <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-text-secondary group-hover:text-white group-hover:bg-accent transition-all mb-6">
                         <DynamicIcon name={calc.icon} size={24} />

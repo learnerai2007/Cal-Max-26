@@ -1,25 +1,26 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { MobileView } from './components/mobile/MobileView';
-import { DesktopView } from './components/desktop/DesktopView';
-import { BottomNav } from './components/BottomNav';
-import { CalculatorDef, CalculatorCategory, ThemeSettings, HistoryItem } from './types';
-import { SettingsOverlay } from './components/SettingsOverlay';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { TopNav } from './components/TopNav';
 import { CommandPalette } from './components/CommandPalette';
-import { getCalculator } from './services/calculatorEngine';
+import { ThemeSettings, HistoryItem, CalculatorDef } from './types';
+import { Home } from './pages/Home';
+import { Tools } from './pages/Tools';
+import { Search } from './pages/Search';
+import { History } from './pages/History';
+import { Settings } from './pages/Settings';
+import { CalculatorPage } from './pages/CalculatorPage';
 
 const DEFAULT_THEME: ThemeSettings = {
-  mode: 'dark',
+  mode: 'light',
   accent: '#6366f1',
   radius: 'medium',
   glassIntensity: 'medium',
 };
 
-function App() {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [activeCategory, setActiveCategory] = useState<CalculatorCategory | 'All'>('All');
-  const [selectedCalculator, setSelectedCalculator] = useState<CalculatorDef | null>(null);
-  const [activeTab, setActiveTab] = useState<'home' | 'tools' | 'search' | 'history'>('home');
+function AppContent() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   
   // Persistence States
@@ -37,30 +38,10 @@ function App() {
     const saved = localStorage.getItem('omni-theme');
     return saved ? JSON.parse(saved) : DEFAULT_THEME;
   });
-  
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Sync Persistence
   useEffect(() => { localStorage.setItem('omni-favorites', JSON.stringify(favorites)); }, [favorites]);
   useEffect(() => { localStorage.setItem('omni-history', JSON.stringify(history)); }, [history]);
-
-  // Deep Linking logic
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#/', '');
-      if (hash) {
-        const calc = getCalculator(hash);
-        if (calc) {
-          setSelectedCalculator(calc);
-          return;
-        }
-      }
-      setSelectedCalculator(null);
-    };
-    window.addEventListener('hashchange', handleHashChange);
-    handleHashChange();
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
 
   // Keyboard Navigation Logic
   useEffect(() => {
@@ -71,17 +52,10 @@ function App() {
       }
       if (e.key === 'Escape') {
         setIsCommandPaletteOpen(false);
-        setIsSettingsOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Sync Theme
@@ -89,17 +63,12 @@ function App() {
     const root = document.documentElement;
     localStorage.setItem('omni-theme', JSON.stringify(theme));
     
-    // Reset classes
     root.classList.remove('dark', 'light', 'midnight');
-    
-    // Apply mode class
     root.classList.add(theme.mode);
     
-    // Set accent colors
     root.style.setProperty('--accent-color', theme.accent);
     root.style.setProperty('--accent-color-dark', `${theme.accent}dd`);
     root.style.setProperty('--accent-glow', `${theme.accent}26`);
-
   }, [theme]);
 
   const toggleFavorite = (id: string) => {
@@ -115,75 +84,55 @@ function App() {
     setHistory(prev => [newItem, ...prev].slice(0, 50));
   };
 
-  const clearHistory = () => setHistory([]);
-
   const handleCalculatorSelect = (calc: CalculatorDef | null) => {
     if (calc) {
-      window.location.hash = `#/${calc.id}`;
-    } else {
-      window.location.hash = '';
+      navigate(`/tools/${calc.id}`);
     }
-    setSelectedCalculator(calc);
     setIsCommandPaletteOpen(false);
   };
 
-  const handleCategorySelect = (cat: CalculatorCategory | 'All') => {
-    setActiveCategory(cat);
-    handleCalculatorSelect(null);
-  };
-
   return (
-    <div className="min-h-screen flex flex-col">
-      {isMobile ? (
-        <MobileView 
-          activeTab={activeTab} 
-          onTabSelect={setActiveTab}
-          selectedCalculator={selectedCalculator}
-          onSelectCalculator={handleCalculatorSelect}
-          activeCategory={activeCategory}
-          onSelectCategory={handleCategorySelect}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          favorites={favorites}
-          onToggleFavorite={toggleFavorite}
-          history={history}
-          onAddToHistory={addToHistory}
-          onClearHistory={clearHistory}
-        />
-      ) : (
-        <DesktopView 
-          selectedCalculator={selectedCalculator}
-          onSelectCalculator={handleCalculatorSelect}
-          activeCategory={activeCategory}
-          onSelectCategory={handleCategorySelect}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          favorites={favorites}
-          onToggleFavorite={toggleFavorite}
-          history={history}
-          onAddToHistory={addToHistory}
-        />
-      )}
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-bg-primary text-text-primary transition-colors duration-500">
+      {/* Background Mesh */}
+      <div className="bg-mesh animate-mesh fixed inset-0 z-[-1]" />
+      
+      <TopNav />
 
-      {/* Unified Bottom Navigation */}
-      <BottomNav 
-        activeTab={activeTab} 
-        onTabSelect={setActiveTab} 
-        onOpenSettings={() => setIsSettingsOpen(true)} 
-      />
+      <main className="flex-1 w-full max-w-7xl mx-auto">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/tools" element={<Tools />} />
+          <Route path="/tools/:id" element={
+            <CalculatorPage 
+              favorites={favorites} 
+              onToggleFavorite={toggleFavorite} 
+              onAddToHistory={addToHistory} 
+            />
+          } />
+          <Route path="/search" element={<Search />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/settings" element={
+            <Settings 
+              theme={theme} 
+              onUpdateTheme={(s) => setTheme(p => ({ ...p, ...s }))} 
+            />
+          } />
+        </Routes>
+      </main>
 
       <CommandPalette 
         isOpen={isCommandPaletteOpen} 
         onClose={() => setIsCommandPaletteOpen(false)}
         onSelect={handleCalculatorSelect}
       />
-
-      <SettingsOverlay 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
-        settings={theme}
-        onUpdate={(s) => setTheme(p => ({ ...p, ...s }))}
-      />
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}

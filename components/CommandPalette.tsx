@@ -54,21 +54,25 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
     <div className="fixed inset-0 z-[200] flex items-start justify-center pt-[15vh] px-4">
       <div className="absolute inset-0 bg-bg-primary/40 backdrop-blur-md" onClick={onClose} />
       
-      <div className="relative w-full max-w-xl bg-bg-primary rounded-[2.5rem] border border-border-color shadow-2xl overflow-hidden animate-fade-up card-shadow">
-        <div className="p-6 border-b border-border-color flex items-center space-x-4">
-          <Search size={24} className="text-text-secondary" />
+      <div className="relative w-full max-w-3xl bg-bg-primary rounded-[3.5rem] border-2 border-border-color shadow-[0_0_100px_rgba(0,0,0,0.6)] overflow-hidden animate-fade-up high-depth matte-surface">
+        <div className="p-10 border-b-2 border-border-color flex items-center space-x-6 bg-bg-primary/80 backdrop-blur-xl z-10 shiny">
+          <div className="w-16 h-16 bg-accent/10 rounded-3xl flex items-center justify-center text-accent shadow-inner">
+            <Search size={32} />
+          </div>
           <input 
             autoFocus
             type="text" 
-            placeholder="What should we calculate?"
-            className="flex-1 bg-transparent border-none outline-none text-text-primary text-xl font-medium placeholder:text-text-secondary/50"
+            placeholder="Search Intelligence Toolkits..."
+            className="flex-1 bg-transparent border-none outline-none text-text-primary text-3xl font-black tracking-tighter placeholder:text-text-secondary/20"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <kbd className="hidden sm:inline-flex items-center px-2.5 py-1 bg-bg-secondary text-text-secondary rounded-xl text-[10px] font-bold border border-border-color">ESC</kbd>
+          <div className="hidden sm:flex items-center space-x-3">
+            <kbd className="px-4 py-2 bg-bg-secondary text-text-secondary rounded-2xl text-[10px] font-black border border-border-color shadow-sm">ESC</kbd>
+          </div>
         </div>
 
-        <div className="max-h-[60vh] overflow-y-auto no-scrollbar p-3 space-y-1">
+        <div className="max-h-[65vh] overflow-y-auto no-scrollbar p-6 space-y-3">
           {results.length > 0 ? (
             results.map((calc, idx) => (
               <button
@@ -76,55 +80,61 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
                 onMouseEnter={() => setSelectedIndex(idx)}
                 onClick={() => onSelect(calc)}
                 className={`
-                  w-full flex items-center justify-between p-4 rounded-2xl transition-all group
-                  ${selectedIndex === idx ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'hover:bg-bg-secondary'}
+                  w-full flex items-center justify-between p-6 rounded-[2.5rem] transition-all group relative overflow-hidden
+                  ${selectedIndex === idx ? 'bg-accent text-white shadow-[0_20px_50px_rgba(var(--accent-rgb),0.3)] scale-[1.02] z-10' : 'hover:bg-bg-secondary/50'}
                 `}
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-6">
                   <div className={`
-                    w-12 h-12 rounded-xl flex items-center justify-center
-                    ${selectedIndex === idx ? 'bg-white/20' : 'bg-bg-secondary text-text-secondary'}
+                    w-16 h-16 rounded-3xl flex items-center justify-center transition-all shadow-inner
+                    ${selectedIndex === idx ? 'bg-white/20 rotate-12' : 'bg-bg-secondary text-accent group-hover:text-white group-hover:bg-accent'}
                   `}>
-                    <Calculator size={22} />
+                    <Calculator size={32} />
                   </div>
                   <div className="text-left">
-                    <h4 className={`text-base font-bold ${selectedIndex === idx ? 'text-white' : 'text-text-primary'}`}>{calc.name}</h4>
-                    <p className={`text-[10px] font-bold uppercase tracking-widest ${selectedIndex === idx ? 'text-white/70' : 'text-text-secondary'}`}>{calc.category}</p>
+                    <h4 className={`text-xl font-black tracking-tight ${selectedIndex === idx ? 'text-white' : 'text-text-primary'}`}>{calc.name}</h4>
+                    <p className={`text-[10px] font-black uppercase tracking-[0.3em] mt-1.5 ${selectedIndex === idx ? 'text-white/70' : 'text-text-secondary'}`}>{calc.category}</p>
                   </div>
                 </div>
                 <div className={`
-                  flex items-center space-x-2 transition-transform duration-300
-                  ${selectedIndex === idx ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}
+                  flex items-center space-x-4 transition-all duration-500
+                  ${selectedIndex === idx ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}
                 `}>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Launch</span>
-                  <ArrowRight size={16} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em]">Execute</span>
+                  <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center shadow-lg">
+                    <ArrowRight size={22} />
+                  </div>
                 </div>
               </button>
             ))
           ) : (
-            <div className="p-12 text-center">
-              <div className="w-20 h-20 bg-bg-secondary rounded-full flex items-center justify-center mx-auto mb-6 text-text-secondary/30">
-                <Search size={40} />
+            <div className="p-24 text-center">
+              <div className="w-32 h-32 bg-bg-secondary rounded-full flex items-center justify-center mx-auto mb-10 text-text-secondary/10 shadow-inner">
+                <Search size={64} />
               </div>
-              <p className="text-text-secondary font-medium">No tools found for "{query}"</p>
+              <p className="text-text-primary font-black text-2xl tracking-tight">No toolkits found</p>
+              <p className="text-text-secondary text-[10px] uppercase tracking-[0.4em] mt-3">Try refining your search parameters</p>
             </div>
           )}
         </div>
 
-        <div className="p-5 bg-bg-secondary/50 border-t border-border-color flex items-center justify-between">
-           <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2 text-[10px] font-bold text-text-secondary uppercase tracking-widest">
-                <kbd className="px-1.5 py-0.5 bg-bg-primary border border-border-color rounded-lg shadow-sm">↑↓</kbd>
+        <div className="p-10 bg-bg-secondary/50 border-t-2 border-border-color flex items-center justify-between backdrop-blur-xl">
+           <div className="flex items-center space-x-10">
+              <div className="flex items-center space-x-4 text-[10px] font-black text-text-secondary uppercase tracking-[0.3em]">
+                <div className="flex gap-2">
+                  <kbd className="px-3 py-1.5 bg-bg-primary border border-border-color rounded-xl shadow-sm">↑</kbd>
+                  <kbd className="px-3 py-1.5 bg-bg-primary border border-border-color rounded-xl shadow-sm">↓</kbd>
+                </div>
                 <span>Navigate</span>
               </div>
-              <div className="flex items-center space-x-2 text-[10px] font-bold text-text-secondary uppercase tracking-widest">
-                <kbd className="px-1.5 py-0.5 bg-bg-primary border border-border-color rounded-lg shadow-sm">ENTER</kbd>
+              <div className="flex items-center space-x-4 text-[10px] font-black text-text-secondary uppercase tracking-[0.3em]">
+                <kbd className="px-4 py-1.5 bg-bg-primary border border-border-color rounded-xl shadow-sm">ENTER</kbd>
                 <span>Select</span>
               </div>
            </div>
-           <div className="flex items-center space-x-2 text-[10px] font-bold text-accent uppercase tracking-widest">
-              <Sparkles size={12} />
-              <span>Lumina Search</span>
+           <div className="flex items-center space-x-3 text-[10px] font-black text-accent uppercase tracking-[0.4em]">
+              <Sparkles size={16} className="animate-pulse-subtle" />
+              <span>Lumina Intelligence</span>
            </div>
         </div>
       </div>

@@ -7,22 +7,22 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const TextField: React.FC<InputProps> = ({ label, error, unit, className = '', ...props }) => (
-  <div className={`space-y-2 ${className}`}>
-    <label className="block text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.2em] ml-1">
+  <div className={`space-y-1.5 ${className}`}>
+    <label className="block text-sm font-medium text-text-secondary ml-1">
       {label}
     </label>
     <div className="relative group">
       <input
-        className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl px-4 py-3.5 text-sm font-semibold text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 transition-all hover:border-slate-700"
+        className="w-full bg-white border border-border-color rounded-xl px-4 py-3 text-base text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent-color/20 focus:border-accent-color transition-all shadow-sm"
         {...props}
       />
       {unit && (
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 px-2 py-0.5 rounded-md bg-slate-800 text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 rounded-md bg-gray-100 text-xs font-medium text-text-secondary">
           {unit}
         </div>
       )}
     </div>
-    {error && <p className="text-[10px] font-bold text-rose-500 ml-1">{error}</p>}
+    {error && <p className="text-xs font-medium text-rose-500 ml-1">{error}</p>}
   </div>
 );
 
@@ -34,14 +34,14 @@ interface SliderProps extends InputProps {
 
 export const SliderField: React.FC<SliderProps> = ({ label, unit, min, max, value, onChange, ...props }) => {
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-end px-1">
-        <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.2em]">
+    <div className="space-y-3">
+      <div className="flex justify-between items-center px-1">
+        <label className="text-sm font-medium text-text-secondary">
           {label}
         </label>
-        <div className="flex items-baseline space-x-1">
-          <span className="mono text-lg font-bold text-indigo-400">{value}</span>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">{unit}</span>
+        <div className="flex items-baseline gap-1 bg-gray-50 px-2 py-1 rounded-lg border border-border-color">
+          <span className="font-mono font-bold text-accent-color">{value}</span>
+          <span className="text-xs text-text-tertiary">{unit}</span>
         </div>
       </div>
       <div className="relative h-6 flex items-center group">
@@ -51,13 +51,13 @@ export const SliderField: React.FC<SliderProps> = ({ label, unit, min, max, valu
           max={max}
           value={value}
           onChange={onChange}
-          className="w-full h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer accent-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
+          className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer accent-accent-color hover:accent-accent-color-dark focus:outline-none focus:ring-4 focus:ring-accent-color/10 transition-all"
           {...props}
         />
       </div>
       <div className="flex justify-between px-1">
-        <span className="text-[9px] font-bold text-slate-600 mono">{min}</span>
-        <span className="text-[9px] font-bold text-slate-600 mono">{max}</span>
+        <span className="text-xs text-text-tertiary font-mono">{min}</span>
+        <span className="text-xs text-text-tertiary font-mono">{max}</span>
       </div>
     </div>
   );

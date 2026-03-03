@@ -17,57 +17,57 @@ export const MobileHistory: React.FC<MobileHistoryProps> = ({
 }) => {
   if (history.length === 0) {
     return (
-      <div className="p-6 h-full flex flex-col items-center justify-center py-24 space-y-6 text-center animate-fade-in">
-        <div className="w-20 h-20 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-300">
-          <Clock size={32} />
+      <div className="p-10 h-full flex flex-col items-center justify-center py-32 space-y-8 text-center animate-fade-in">
+        <div className="w-24 h-24 bg-bg-secondary rounded-full flex items-center justify-center text-text-secondary/20 shadow-inner">
+          <Clock size={40} />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white">Recent Calculations</h3>
-          <p className="text-xs text-slate-400 max-w-[200px] mx-auto mt-2 leading-relaxed">Your calculation history is stored locally and will appear here.</p>
+          <h3 className="text-lg font-bold text-text-primary tracking-tight">Recent Calculations</h3>
+          <p className="text-xs text-text-secondary max-w-[240px] mx-auto mt-3 leading-relaxed font-medium">Your calculation history is stored locally and will appear here.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6 pb-32 animate-fade-in">
+    <div className="p-8 space-y-8 pb-32 animate-fade-in">
       <div className="flex items-center justify-between px-2">
-         <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Computation Log</h2>
-         <button onClick={onClearHistory} className="text-slate-500 hover:text-rose-500 transition-colors">
-            <Trash2 size={16} />
+         <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary">Computation Log</h2>
+         <button onClick={onClearHistory} className="w-10 h-10 flex items-center justify-center rounded-xl bg-bg-secondary/50 text-text-secondary hover:text-rose-500 transition-all active:scale-90">
+            <Trash2 size={18} />
          </button>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {history.map(item => {
           const tool = CALCULATORS.find(c => c.id === item.calculatorId);
           if (!tool) return null;
           
           return (
-            <div key={item.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-4">
+            <div key={item.id} className="bg-bg-secondary/30 border border-border-color rounded-[2.5rem] p-6 shadow-sm space-y-5 high-depth matte-surface">
                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                     <div className="w-8 h-8 bg-indigo-500/10 text-indigo-500 rounded-xl flex items-center justify-center">
-                        <Calculator size={16} />
+                  <div className="flex items-center space-x-4">
+                     <div className="w-12 h-12 bg-accent/10 text-accent rounded-2xl flex items-center justify-center shadow-inner">
+                        <Calculator size={22} />
                      </div>
                      <div>
-                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">{item.calculatorName}</h4>
-                        <p className="text-[9px] text-slate-400">{new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                        <h4 className="text-sm font-bold text-text-primary tracking-tight">{item.calculatorName}</h4>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary mt-0.5">{new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                      </div>
                   </div>
                   <button 
                     onClick={() => onSelectCalculator(tool)}
-                    className="p-2 text-indigo-500 hover:bg-indigo-500/10 rounded-lg transition-all"
+                    className="w-10 h-10 bg-accent/10 text-accent rounded-xl flex items-center justify-center hover:bg-accent hover:text-white transition-all active:scale-90"
                   >
-                    <ArrowRight size={18} />
+                    <ArrowRight size={20} />
                   </button>
                </div>
 
-               <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-50 dark:border-slate-800/50">
+               <div className="grid grid-cols-2 gap-4 pt-5 border-t border-border-color">
                   {item.results.slice(0, 2).map(res => (
-                    <div key={res.id}>
-                       <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{res.label}</p>
-                       <p className="text-xs font-bold text-slate-900 dark:text-white">{res.value} {res.unit}</p>
+                    <div key={res.id} className="space-y-1">
+                       <p className="text-[8px] font-black text-text-secondary uppercase tracking-[0.2em]">{res.label}</p>
+                       <p className="text-sm font-bold text-text-primary tracking-tight">{res.value} <span className="text-[10px] font-normal text-text-secondary">{res.unit}</span></p>
                     </div>
                   ))}
                </div>
