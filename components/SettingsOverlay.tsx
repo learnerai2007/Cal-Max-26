@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { X, Palette, Sun, Moon, Zap, Layers, Circle, Check } from 'lucide-react';
+import { X, Palette, Sun, Moon, Zap, Circle, Check, Sparkles } from 'lucide-react';
 import { ThemeSettings } from '../types';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface SettingsOverlayProps {
   isOpen: boolean;
@@ -11,12 +12,12 @@ interface SettingsOverlayProps {
 }
 
 const ACCENT_COLORS = [
-  { name: 'Indigo', value: '#6366f1', dark: '#4f46e5' },
-  { name: 'Rose', value: '#f43f5e', dark: '#e11d48' },
-  { name: 'Emerald', value: '#10b981', dark: '#059669' },
-  { name: 'Amber', value: '#f59e0b', dark: '#d97706' },
-  { name: 'Violet', value: '#8b5cf6', dark: '#7c3aed' },
-  { name: 'Cyan', value: '#06b6d4', dark: '#0891b2' },
+  { name: 'Indigo', value: '#6366f1' },
+  { name: 'Rose', value: '#f43f5e' },
+  { name: 'Emerald', value: '#10b981' },
+  { name: 'Amber', value: '#f59e0b' },
+  { name: 'Violet', value: '#8b5cf6' },
+  { name: 'Cyan', value: '#06b6d4' },
 ];
 
 export const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClose, settings, onUpdate }) => {
@@ -24,22 +25,34 @@ export const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClos
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-end md:p-6">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+        onClick={onClose} 
+      />
       
-      <div className="relative w-full h-full md:w-[420px] md:h-auto md:max-h-[90vh] bg-slate-950 md:rounded-[2.5rem] border-l md:border border-white/10 shadow-2xl flex flex-col overflow-hidden animate-slide-in">
+      <motion.div 
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="relative w-full h-full md:w-[400px] md:h-auto md:max-h-[90vh] bg-bg-primary md:rounded-[2.5rem] border-l md:border border-border-color shadow-2xl flex flex-col overflow-hidden card-shadow"
+      >
         {/* Header */}
-        <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center text-white shadow-lg shadow-accent/20">
-              <Palette size={20} />
+        <div className="p-8 border-b border-border-color flex items-center justify-between shrink-0">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center text-white shadow-xl shadow-accent/20">
+              <Palette size={24} />
             </div>
             <div>
-              <h3 className="text-lg font-bold tracking-tight">Appearance</h3>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Personalize your Workspace</p>
+              <h3 className="text-xl font-bold tracking-tight text-text-primary">Appearance</h3>
+              <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">Personalize Lumina</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 text-slate-500 hover:text-white transition-colors">
-            <X size={20} />
+          <button onClick={onClose} className="p-2 text-text-secondary hover:text-text-primary transition-colors rounded-xl hover:bg-bg-secondary">
+            <X size={24} />
           </button>
         </div>
 
@@ -48,49 +61,43 @@ export const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClos
           {/* Theme Mode */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Base Theme</span>
-              <Zap size={14} className="text-accent" />
+              <span className="text-[11px] font-bold uppercase tracking-widest text-text-secondary">Base Theme</span>
+              <Sparkles size={14} className="text-accent" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <ThemeButton 
                 active={settings.mode === 'light'} 
                 onClick={() => onUpdate({ mode: 'light' })}
-                icon={<Sun size={18} />}
-                label="Daylight"
+                icon={<Sun size={20} />}
+                label="Light"
               />
               <ThemeButton 
                 active={settings.mode === 'dark'} 
                 onClick={() => onUpdate({ mode: 'dark' })}
-                icon={<Moon size={18} />}
-                label="Deep Night"
+                icon={<Moon size={20} />}
+                label="Dark"
               />
               <ThemeButton 
                 active={settings.mode === 'midnight'} 
                 onClick={() => onUpdate({ mode: 'midnight' })}
-                icon={<Circle size={18} />}
+                icon={<Circle size={20} />}
                 label="Midnight"
-              />
-              <ThemeButton 
-                active={settings.mode === 'glass'} 
-                onClick={() => onUpdate({ mode: 'glass' })}
-                icon={<Layers size={18} />}
-                label="Aero Glass"
               />
             </div>
           </section>
 
           {/* Accent Color */}
           <section className="space-y-4">
-             <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Accent Signature</span>
+             <span className="text-[11px] font-bold uppercase tracking-widest text-text-secondary">Accent Signature</span>
              <div className="grid grid-cols-6 gap-3">
                 {ACCENT_COLORS.map(color => (
                   <button
                     key={color.name}
                     onClick={() => onUpdate({ accent: color.value })}
-                    className={`aspect-square rounded-full transition-all flex items-center justify-center border-4 ${settings.accent === color.value ? 'border-white/20 scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`}
+                    className={`aspect-square rounded-2xl transition-all flex items-center justify-center border-4 ${settings.accent === color.value ? 'border-accent/20 scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`}
                     style={{ backgroundColor: color.value }}
                   >
-                    {settings.accent === color.value && <Check size={14} className="text-white" />}
+                    {settings.accent === color.value && <Check size={18} className="text-white" />}
                   </button>
                 ))}
              </div>
@@ -98,48 +105,31 @@ export const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClos
 
           {/* Border Radius */}
           <section className="space-y-4">
-            <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">UI Softness</span>
-            <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-text-secondary">UI Softness</span>
+            <div className="flex bg-bg-secondary p-1.5 rounded-2xl border border-border-color">
               {(['none', 'small', 'medium', 'large'] as const).map(r => (
                 <button
                   key={r}
                   onClick={() => onUpdate({ radius: r })}
-                  className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${settings.radius === r ? 'bg-accent text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${settings.radius === r ? 'bg-accent text-white shadow-lg' : 'text-text-secondary hover:text-text-primary'}`}
                 >
                   {r}
                 </button>
               ))}
             </div>
           </section>
-
-          {/* Glass Intensity */}
-          <section className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Transparency</span>
-              <span className="text-[10px] font-bold text-accent uppercase">{settings.glassIntensity}</span>
-            </div>
-            <input 
-              type="range"
-              min="0"
-              max="3"
-              step="1"
-              value={['none', 'low', 'medium', 'high'].indexOf(settings.glassIntensity)}
-              onChange={(e) => onUpdate({ glassIntensity: ['none', 'low', 'medium', 'high'][parseInt(e.target.value)] as any })}
-              className="w-full h-1.5 bg-white/10 rounded-full appearance-none accent-accent"
-            />
-          </section>
         </div>
 
         {/* Footer */}
-        <div className="p-6 bg-white/[0.02] border-t border-white/5 flex gap-3">
+        <div className="p-8 bg-bg-secondary/50 border-t border-border-color flex gap-4">
           <button 
             onClick={onClose}
-            className="flex-1 bg-accent text-white font-bold py-4 rounded-2xl text-xs uppercase tracking-[0.2em] shadow-xl shadow-accent/20 hover:brightness-110 transition-all active:scale-95"
+            className="flex-1 bg-accent text-white font-bold py-5 rounded-2xl text-xs uppercase tracking-[0.2em] shadow-xl shadow-accent/20 hover:brightness-110 transition-all active:scale-95"
           >
-            Apply Changes
+            Save Appearance
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -147,9 +137,9 @@ export const SettingsOverlay: React.FC<SettingsOverlayProps> = ({ isOpen, onClos
 const ThemeButton = ({ active, onClick, icon, label }: any) => (
   <button
     onClick={onClick}
-    className={`p-4 rounded-2xl border transition-all flex flex-col items-center gap-3 ${active ? 'bg-accent/10 border-accent text-accent' : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10 hover:text-slate-300'}`}
+    className={`p-5 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 ${active ? 'bg-accent/10 border-accent text-accent' : 'bg-bg-secondary border-border-color text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'}`}
   >
     {icon}
-    <span className="text-[9px] font-black uppercase tracking-widest">{label}</span>
+    <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
   </button>
 );

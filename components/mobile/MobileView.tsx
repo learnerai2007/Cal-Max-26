@@ -50,27 +50,7 @@ export const MobileView: React.FC<MobileViewProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-slate-950">
-      <header className="h-16 flex items-center justify-between px-6 shrink-0 z-30 bg-slate-950 border-b border-white/5">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white">
-            <Zap size={18} />
-          </div>
-          <span className="text-lg font-black tracking-tighter uppercase text-white">OmniCalc</span>
-        </div>
-        <div className="flex items-center space-x-3">
-          <button 
-            onClick={onOpenSettings}
-            className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400"
-          >
-            <Settings size={18} />
-          </button>
-          <div className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-          </div>
-        </div>
-      </header>
-
+    <div className="flex flex-col h-screen overflow-hidden bg-bg-primary">
       <main className="flex-1 overflow-y-auto no-scrollbar">
         {activeTab === 'home' && (
           <MobileDashboard 
@@ -94,15 +74,6 @@ export const MobileView: React.FC<MobileViewProps> = ({
           />
         )}
       </main>
-
-      <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] z-50">
-        <div className="glass-heavy rounded-[2.5rem] p-2 ring-1 ring-white/10 flex justify-between shadow-2xl shadow-black/40">
-          <TabButton icon={<Home size={22} />} label="Home" active={activeTab === 'home'} onClick={() => onTabSelect('home')} />
-          <TabButton icon={<Box size={22} />} label="Tools" active={activeTab === 'tools'} onClick={() => onTabSelect('tools')} />
-          <TabButton icon={<Search size={22} />} label="Search" active={activeTab === 'search'} onClick={() => onTabSelect('search')} />
-          <TabButton icon={<Clock size={22} />} label="History" active={activeTab === 'history'} onClick={() => onTabSelect('history')} />
-        </div>
-      </nav>
     </div>
   );
 };

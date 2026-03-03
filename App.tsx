@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { MobileView } from './components/mobile/MobileView';
 import { DesktopView } from './components/desktop/DesktopView';
+import { BottomNav } from './components/BottomNav';
 import { CalculatorDef, CalculatorCategory, ThemeSettings, HistoryItem } from './types';
 import { SettingsOverlay } from './components/SettingsOverlay';
 import { CommandPalette } from './components/CommandPalette';
@@ -18,7 +19,7 @@ function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [activeCategory, setActiveCategory] = useState<CalculatorCategory | 'All'>('All');
   const [selectedCalculator, setSelectedCalculator] = useState<CalculatorDef | null>(null);
-  const [mobileTab, setMobileTab] = useState<'home' | 'tools' | 'search' | 'history'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'tools' | 'search' | 'history'>('home');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   
   // Persistence States
@@ -87,21 +88,18 @@ function App() {
   useEffect(() => {
     const root = document.documentElement;
     localStorage.setItem('omni-theme', JSON.stringify(theme));
+    
+    // Reset classes
+    root.classList.remove('dark', 'light', 'midnight');
+    
+    // Apply mode class
+    root.classList.add(theme.mode);
+    
+    // Set accent colors
     root.style.setProperty('--accent-color', theme.accent);
     root.style.setProperty('--accent-color-dark', `${theme.accent}dd`);
     root.style.setProperty('--accent-glow', `${theme.accent}26`);
-    root.classList.remove('dark', 'light');
-    if (theme.mode === 'light') root.classList.add('light');
-    else root.classList.add('dark');
-    
-    // Apply specialized theme colors
-    if (theme.mode === 'midnight') {
-      root.style.setProperty('--bg-primary', '#000000');
-      root.style.setProperty('--bg-secondary', '#0a0a0a');
-    } else if (theme.mode === 'glass') {
-      root.style.setProperty('--bg-primary', '#020617');
-      root.style.setProperty('--bg-secondary', 'rgba(15, 23, 42, 0.4)');
-    }
+
   }, [theme]);
 
   const toggleFavorite = (id: string) => {
@@ -135,11 +133,11 @@ function App() {
   };
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       {isMobile ? (
         <MobileView 
-          activeTab={mobileTab} 
-          onTabSelect={setMobileTab}
+          activeTab={activeTab} 
+          onTabSelect={setActiveTab}
           selectedCalculator={selectedCalculator}
           onSelectCalculator={handleCalculatorSelect}
           activeCategory={activeCategory}
@@ -165,6 +163,13 @@ function App() {
         />
       )}
 
+      {/* Unified Bottom Navigation */}
+      <BottomNav 
+        activeTab={activeTab} 
+        onTabSelect={setActiveTab} 
+        onOpenSettings={() => setIsSettingsOpen(true)} 
+      />
+
       <CommandPalette 
         isOpen={isCommandPaletteOpen} 
         onClose={() => setIsCommandPaletteOpen(false)}
@@ -177,7 +182,7 @@ function App() {
         settings={theme}
         onUpdate={(s) => setTheme(p => ({ ...p, ...s }))}
       />
-    </>
+    </div>
   );
 }
 

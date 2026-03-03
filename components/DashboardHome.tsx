@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  Clock, Calendar, Cloud, Timer, FileText, Bell, CheckSquare, 
-  Zap, Battery, MapPin, Plus, Trash2, ChevronRight, Play, Pause, RotateCcw, Star
+  Clock, Calendar, Cloud, FileText, Bell, CheckSquare, 
+  Zap, Battery, Plus, Trash2, ChevronRight, Star, Search, Sparkles
 } from 'lucide-react';
-import { CalculatorLogo } from './CalculatorLogo';
 import { CalculatorDef, HistoryItem } from '../types';
 import { CALCULATORS } from '../services/calculatorEngine';
+import { motion } from 'motion/react';
 
 interface DashboardHomeProps {
   onSelectCalculator: (calc: CalculatorDef) => void;
@@ -24,8 +24,6 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
   const [todos, setTodos] = useState<{id: number, text: string, done: boolean}[]>(
     JSON.parse(localStorage.getItem('omni-todos') || '[]')
   );
-  const [timer, setTimer] = useState(0);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   useEffect(() => {
     const timerId = setInterval(() => setTime(new Date()), 1000);
@@ -35,14 +33,6 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
   useEffect(() => { localStorage.setItem('omni-note', notepad); }, [notepad]);
   useEffect(() => { localStorage.setItem('omni-todos', JSON.stringify(todos)); }, [todos]);
 
-  useEffect(() => {
-    let interval: any;
-    if (isTimerRunning) {
-      interval = setInterval(() => setTimer(t => t + 1), 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isTimerRunning]);
-
   const favoriteTools = useMemo(() => CALCULATORS.filter(c => favorites.includes(c.id)), [favorites]);
   const recentCalculators = useMemo(() => {
     return history
@@ -51,193 +41,182 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
       .slice(0, 4);
   }, [history]);
 
-  const formatTimer = (s: number) => {
-    const mins = Math.floor(s / 60);
-    const secs = s % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
   const toggleTodo = (id: number) => {
     setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t));
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 md:p-10 space-y-10 animate-fade-in pb-40">
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-        <div className="lg:col-span-4 flex justify-center lg:justify-start">
-          <CalculatorLogo className="w-64 h-80" />
+    <div className="max-w-5xl mx-auto p-6 md:p-12 space-y-12 animate-fade-up pb-40">
+      {/* Welcome Section */}
+      <section className="space-y-4 text-center md:text-left">
+        <div className="flex items-center justify-center md:justify-start space-x-2 text-accent font-bold tracking-tight">
+          <Sparkles size={18} />
+          <span>Welcome back</span>
         </div>
-        <div className="lg:col-span-8 space-y-6 text-center lg:text-left">
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-[0.9]">
-            YOUR <span className="text-indigo-500">ULTIMATE</span><br />
-            COMPUTE HUB.
-          </h1>
-          <p className="text-slate-400 text-lg font-medium max-w-xl">
-            Unified navigation for every specialized computation you need.
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-            <button 
-              onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
-              className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-indigo-600/20 flex items-center gap-2 transition-all active:scale-95"
-            >
-              OmniSearch <Zap size={18} />
-            </button>
-            <button className="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-4 rounded-2xl font-black uppercase tracking-widest transition-all">
-              ⌘K
-            </button>
-          </div>
+        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-text-primary leading-tight">
+          What would you like to <br />
+          <span className="text-accent">calculate</span> today?
+        </h1>
+        
+        {/* Prominent Search Trigger */}
+        <div className="pt-6 max-w-2xl mx-auto md:mx-0">
+          <button 
+            onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+            className="w-full glass rounded-3xl p-4 md:p-6 flex items-center space-x-4 text-text-secondary hover:text-text-primary transition-all group card-shadow"
+          >
+            <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all">
+              <Search size={24} />
+            </div>
+            <span className="text-lg md:text-xl font-medium">Search for any tool or formula...</span>
+            <div className="hidden md:flex ml-auto items-center space-x-2 px-3 py-1.5 bg-border-color rounded-xl text-xs font-bold">
+              <span>⌘</span>
+              <span>K</span>
+            </div>
+          </button>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="glass rounded-[2rem] p-6 flex flex-col items-center justify-center space-y-2 border-b-4 border-indigo-500/50">
-          <Clock className="text-indigo-400" size={24} />
-          <div className="text-4xl font-black text-white mono">
-            {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Current Time</span>
-        </div>
+      {/* Quick Stats Grid */}
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard 
+          icon={<Clock className="text-accent" />} 
+          value={time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
+          label="Current Time" 
+        />
+        <StatCard 
+          icon={<Calendar className="text-rose-500" />} 
+          value={time.toLocaleDateString([], { month: 'short', day: 'numeric' })} 
+          label="Today" 
+        />
+        <StatCard 
+          icon={<Cloud className="text-sky-500" />} 
+          value="24°C" 
+          label="Local Weather" 
+        />
+        <StatCard 
+          icon={<Battery className="text-emerald-500" />} 
+          value="82%" 
+          label="System Status" 
+        />
+      </section>
 
-        <div className="glass rounded-[2rem] p-6 flex flex-col items-center justify-center space-y-2 border-b-4 border-rose-500/50">
-          <Calendar className="text-rose-400" size={24} />
-          <div className="text-xl font-black text-white uppercase tracking-tight">
-            {time.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Calendar</span>
-        </div>
-
-        <div className="glass rounded-[2rem] p-6 flex flex-col items-center justify-center space-y-2 border-b-4 border-amber-500/50">
-          <Cloud className="text-amber-400" size={24} />
-          <div className="text-2xl font-black text-white mono">24°C</div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Local Climate</span>
-        </div>
-
-        <div className="glass rounded-[2rem] p-6 flex flex-col items-center justify-center space-y-2 border-b-4 border-emerald-500/50">
-          <Battery className="text-emerald-400" size={24} />
-          <div className="text-2xl font-black text-white mono">82%</div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">System Ready</span>
-        </div>
-
-        {/* Favorites Section */}
-        <div className="md:col-span-2 glass rounded-[2rem] p-8 space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-amber-500">
-              <Star size={20} fill="currentColor" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Favorite Engines</span>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {favoriteTools.length > 0 ? favoriteTools.slice(0, 4).map(c => (
-              <button 
-                key={c.id}
-                onClick={() => onSelectCalculator(c)}
-                className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
-              >
-                <span className="text-xs font-bold text-slate-300 truncate pr-2">{c.name}</span>
-                <ChevronRight size={14} className="text-amber-500 group-hover:translate-x-1 transition-transform" />
-              </button>
-            )) : (
-              <p className="col-span-2 text-[10px] text-slate-500 font-bold uppercase py-4">Star tools to see them here.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Recents Section */}
-        <div className="md:col-span-2 glass rounded-[2rem] p-8 space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-indigo-400">
-              <Clock size={20} />
-              <span className="text-[10px] font-black uppercase tracking-widest">Recent Activity</span>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {recentCalculators.length > 0 ? recentCalculators.map(c => c && (
-              <button 
-                key={c.id}
-                onClick={() => onSelectCalculator(c)}
-                className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
-              >
-                <span className="text-xs font-bold text-slate-300 truncate pr-2">{c.name}</span>
-                <ChevronRight size={14} className="text-indigo-500 group-hover:translate-x-1 transition-transform" />
-              </button>
-            )) : (
-              <p className="col-span-2 text-[10px] text-slate-500 font-bold uppercase py-4">No recent history.</p>
-            )}
-          </div>
-        </div>
-
-        <div className="lg:row-span-2 glass rounded-[2.5rem] p-8 space-y-4 flex flex-col">
-          <div className="flex items-center gap-2 text-indigo-400">
-            <FileText size={20} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Brain Dump</span>
-          </div>
-          <textarea 
-            className="flex-1 bg-transparent border-none resize-none text-sm font-medium text-slate-300 placeholder:text-slate-600 focus:ring-0 no-scrollbar leading-relaxed"
-            placeholder="Start typing your ideas here..."
-            value={notepad}
-            onChange={(e) => setNotepad(e.target.value)}
-          ></textarea>
-        </div>
-
-        <div className="md:col-span-2 lg:col-span-2 glass rounded-[2.5rem] p-8 space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-emerald-400">
-              <CheckSquare size={20} />
-              <span className="text-[10px] font-black uppercase tracking-widest">Task Queue</span>
-            </div>
-            <button 
-              onClick={() => {
-                const text = prompt('New task:');
-                if (text) setTodos([{ id: Date.now(), text, done: false }, ...todos]);
-              }}
-              className="p-1.5 bg-emerald-500/10 text-emerald-500 rounded-lg hover:bg-emerald-500/20 transition-all"
-            >
-              <Plus size={16} />
-            </button>
-          </div>
-          <div className="space-y-3 max-h-[120px] overflow-y-auto no-scrollbar">
-            {todos.map(todo => (
-              <div key={todo.id} className="flex items-center justify-between group">
-                <div 
-                  className="flex items-center gap-3 cursor-pointer"
-                  onClick={() => toggleTodo(todo.id)}
-                >
-                  <div className={`w-4 h-4 rounded border ${todo.done ? 'bg-emerald-500 border-emerald-500' : 'border-white/20'}`}></div>
-                  <span className={`text-xs font-medium ${todo.done ? 'text-slate-600 line-through' : 'text-slate-300'}`}>
-                    {todo.text}
-                  </span>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Favorites & Recents */}
+        <div className="md:col-span-2 space-y-8">
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Star size={20} className="text-amber-500" fill="currentColor" />
+              Favorites
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {favoriteTools.length > 0 ? favoriteTools.slice(0, 4).map(c => (
+                <ToolCard key={c.id} tool={c} onClick={() => onSelectCalculator(c)} />
+              )) : (
+                <div className="col-span-full p-8 glass rounded-3xl border-dashed border-2 border-border-color text-center text-text-secondary">
+                  No favorites yet. Star a tool to see it here.
                 </div>
-                <button 
-                  onClick={() => setTodos(todos.filter(t => t.id !== todo.id))}
-                  className="text-slate-600 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"
-                >
-                  <Trash2 size={12} />
-                </button>
-              </div>
-            ))}
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Clock size={20} className="text-accent" />
+              Recently Used
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {recentCalculators.length > 0 ? recentCalculators.map(c => c && (
+                <ToolCard key={c.id} tool={c} onClick={() => onSelectCalculator(c)} />
+              )) : (
+                <div className="col-span-full p-8 glass rounded-3xl border-dashed border-2 border-border-color text-center text-text-secondary">
+                  Your recent calculations will appear here.
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="glass rounded-[2rem] p-6 flex flex-col justify-between space-y-4">
-          <div className="flex items-center gap-2 text-rose-400">
-            <Bell size={20} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Reminders</span>
+        {/* Sidebar Widgets */}
+        <div className="space-y-8">
+          <div className="glass rounded-3xl p-6 space-y-4 flex flex-col h-[300px] card-shadow">
+            <h3 className="font-bold flex items-center gap-2 text-text-secondary">
+              <FileText size={18} />
+              Quick Notes
+            </h3>
+            <textarea 
+              className="flex-1 bg-transparent border-none resize-none text-sm font-medium text-text-primary placeholder:text-text-secondary/50 focus:ring-0 no-scrollbar leading-relaxed"
+              placeholder="Jot down some thoughts..."
+              value={notepad}
+              onChange={(e) => setNotepad(e.target.value)}
+            />
           </div>
-          <div className="p-3 bg-rose-500/5 border border-rose-500/10 rounded-xl">
-             <p className="text-xs text-white font-bold truncate">Upgrade to Pro</p>
+
+          <div className="glass rounded-3xl p-6 space-y-4 card-shadow">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold flex items-center gap-2 text-text-secondary">
+                <CheckSquare size={18} />
+                Tasks
+              </h3>
+              <button 
+                onClick={() => {
+                  const text = prompt('New task:');
+                  if (text) setTodos([{ id: Date.now(), text, done: false }, ...todos]);
+                }}
+                className="w-8 h-8 bg-accent/10 text-accent rounded-xl flex items-center justify-center hover:bg-accent hover:text-white transition-all"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+            <div className="space-y-3 max-h-[200px] overflow-y-auto no-scrollbar">
+              {todos.map(todo => (
+                <div key={todo.id} className="flex items-center justify-between group">
+                  <div 
+                    className="flex items-center gap-3 cursor-pointer"
+                    onClick={() => toggleTodo(todo.id)}
+                  >
+                    <div className={`w-5 h-5 rounded-lg border-2 transition-all ${todo.done ? 'bg-accent border-accent' : 'border-border-color group-hover:border-accent/50'}`}>
+                      {todo.done && <Plus size={14} className="text-white rotate-45" />}
+                    </div>
+                    <span className={`text-sm font-medium transition-all ${todo.done ? 'text-text-secondary line-through' : 'text-text-primary'}`}>
+                      {todo.text}
+                    </span>
+                  </div>
+                  <button 
+                    onClick={() => setTodos(todos.filter(t => t.id !== todo.id))}
+                    className="text-text-secondary hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-
-        <button 
-          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
-          className="bg-indigo-600 rounded-[2rem] p-6 flex flex-col items-center justify-center space-y-2 shadow-xl shadow-indigo-600/30 hover:scale-[1.02] active:scale-95 transition-all group"
-        >
-          <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white mb-2">
-            <Plus size={24} />
-          </div>
-          <span className="text-xs font-black uppercase tracking-widest text-white">Find Tool</span>
-        </button>
-      </section>
+      </div>
     </div>
   );
 };
+
+const StatCard = ({ icon, value, label }: any) => (
+  <div className="glass rounded-3xl p-4 flex flex-col items-center justify-center space-y-1 card-shadow">
+    <div className="p-2 bg-border-color rounded-xl mb-1">{icon}</div>
+    <div className="text-xl font-bold text-text-primary">{value}</div>
+    <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">{label}</span>
+  </div>
+);
+
+const ToolCard: React.FC<{ tool: CalculatorDef, onClick: () => void }> = ({ tool, onClick }) => (
+  <button 
+    onClick={onClick}
+    className="flex items-center p-4 glass rounded-2xl hover:border-accent/50 transition-all group card-shadow text-left"
+  >
+    <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all mr-4">
+      <Zap size={20} />
+    </div>
+    <div className="flex-1 min-w-0">
+      <div className="text-sm font-bold text-text-primary truncate">{tool.name}</div>
+      <div className="text-[10px] text-text-secondary uppercase tracking-wider">{tool.category}</div>
+    </div>
+    <ChevronRight size={16} className="text-text-secondary group-hover:text-accent group-hover:translate-x-1 transition-all" />
+  </button>
+);

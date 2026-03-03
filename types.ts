@@ -4,7 +4,7 @@ export type CalculatorCategory = 'Finance' | 'Health' | 'Math' | 'Engineering' |
 export type InputType = 'number' | 'slider' | 'currency' | 'select' | 'toggle' | 'date' | 'text';
 
 export interface ThemeSettings {
-  mode: 'light' | 'dark' | 'midnight' | 'glass';
+  mode: 'light' | 'dark' | 'midnight';
   accent: string;
   radius: 'none' | 'small' | 'medium' | 'large' | 'full';
   glassIntensity: 'none' | 'low' | 'medium' | 'high';
